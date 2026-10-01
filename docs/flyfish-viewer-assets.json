@@ -36,12 +36,12 @@
     "data-asset",
     "eda"
   ],
-  "copiedAt": "2026-10-01T03:27:36.094Z",
+  "copiedAt": "2026-10-01T11:47:16.102Z",
   "assets": [
     {
       "rendererId": "pdf",
       "id": "pdf-worker",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\pdf\\pdf.worker.mjs",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\pdf\\pdf.worker.mjs",
       "copied": true,
       "sourcePackage": "pdfjs-dist",
       "sourceVersion": "5.4.624"
@@ -49,7 +49,7 @@
     {
       "rendererId": "pdf",
       "id": "pdf-cmaps",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\pdf\\cmaps",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\pdf\\cmaps",
       "copied": true,
       "sourcePackage": "pdfjs-dist",
       "sourceVersion": "5.4.624"
@@ -57,7 +57,7 @@
     {
       "rendererId": "pdf",
       "id": "pdf-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\pdf\\wasm",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\pdf\\wasm",
       "copied": true,
       "sourcePackage": "pdfjs-dist",
       "sourceVersion": "5.4.624"
@@ -65,7 +65,7 @@
     {
       "rendererId": "pdf",
       "id": "pdf-standard-fonts",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\pdf\\standard_fonts",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\pdf\\standard_fonts",
       "copied": true,
       "sourcePackage": "pdfjs-dist",
       "sourceVersion": "5.4.624"
@@ -73,14 +73,14 @@
     {
       "rendererId": "pdf",
       "id": "pdf-cjk-font-fallback",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\pdf\\fonts",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\pdf\\fonts",
       "copied": true,
       "required": true
     },
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-module",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\index.mjs",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\index.mjs",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -88,7 +88,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-worker",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\worker.mjs",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\worker.mjs",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -96,7 +96,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-frame-cache",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\frame-cache.mjs",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\frame-cache.mjs",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -104,7 +104,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\ppt-native.wasm",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\ppt-native.wasm",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -112,7 +112,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-cjk-font",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\ppt-font-cjk.otf",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\ppt-font-cjk.otf",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -120,7 +120,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-manifest",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\manifest.json",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\manifest.json",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -128,7 +128,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-package",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\package.json",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\package.json",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -136,7 +136,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-license",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\LICENSE",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\LICENSE",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -144,7 +144,7 @@
     {
       "rendererId": "office-presentation-binary",
       "id": "ppt-notice",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\ppt\\NOTICE",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\ppt\\NOTICE",
       "copied": true,
       "sourcePackage": "@file-viewer/ppt",
       "sourceVersion": "0.3.4"
@@ -152,19 +152,19 @@
     {
       "rendererId": "office-word-openxml",
       "id": "docx-worker",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\docx\\docx.worker.js",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\docx\\docx.worker.js",
       "copied": true
     },
     {
       "rendererId": "office-word-openxml",
       "id": "docx-worker-jszip",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\docx\\jszip.min.js",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\docx\\jszip.min.js",
       "copied": true
     },
     {
       "rendererId": "spreadsheet-openxml",
       "id": "spreadsheet-worker",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\xlsx\\sheet.worker.js",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\xlsx\\sheet.worker.js",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-spreadsheet",
       "sourceVersion": "3.1.2"
@@ -172,7 +172,7 @@
     {
       "rendererId": "cad",
       "id": "cad-wasm-directory",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\cad",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\cad",
       "copied": true,
       "sourcePackage": "@flyfish-dev/cad-viewer",
       "sourceVersion": "0.8.2"
@@ -180,13 +180,13 @@
     {
       "rendererId": "model",
       "id": "model-occt-worker",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\model\\occt-worker.js",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\model\\occt-worker.js",
       "copied": true
     },
     {
       "rendererId": "model",
       "id": "model-occt-runtime",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\model\\occt-import-js.js",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\model\\occt-import-js.js",
       "copied": true,
       "sourcePackage": "occt-import-js",
       "sourceVersion": "0.0.23"
@@ -194,7 +194,7 @@
     {
       "rendererId": "model",
       "id": "model-occt-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\model\\occt-import-js.wasm",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\model\\occt-import-js.wasm",
       "copied": true,
       "sourcePackage": "occt-import-js",
       "sourceVersion": "0.0.23"
@@ -202,7 +202,7 @@
     {
       "rendererId": "model",
       "id": "model-occt-license",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\model\\LICENSE.occt.txt",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\model\\LICENSE.occt.txt",
       "copied": true,
       "sourcePackage": "occt-import-js",
       "sourceVersion": "0.0.23"
@@ -210,7 +210,7 @@
     {
       "rendererId": "model",
       "id": "model-occt-import-license",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\model\\LICENSE.occt-import-js.txt",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\model\\LICENSE.occt-import-js.txt",
       "copied": true,
       "sourcePackage": "occt-import-js",
       "sourceVersion": "0.0.23"
@@ -218,31 +218,31 @@
     {
       "rendererId": "typst",
       "id": "typst-compiler-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\typst\\typst_ts_web_compiler_bg.wasm",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\typst\\typst_ts_web_compiler_bg.wasm",
       "copied": true
     },
     {
       "rendererId": "typst",
       "id": "typst-renderer-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\typst\\typst_ts_renderer_bg.wasm",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\typst\\typst_ts_renderer_bg.wasm",
       "copied": true
     },
     {
       "rendererId": "typst",
       "id": "typst-font-assets",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\typst\\fonts",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\typst\\fonts",
       "copied": true
     },
     {
       "rendererId": "archive",
       "id": "libarchive-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\libarchive\\libarchive.wasm",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\libarchive\\libarchive.wasm",
       "copied": true
     },
     {
       "rendererId": "chm",
       "id": "chm-worker",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\chm\\chm.worker.js",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\chm\\chm.worker.js",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-chm",
       "sourceVersion": "3.1.2"
@@ -250,7 +250,7 @@
     {
       "rendererId": "chm",
       "id": "chm-wasm-module",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\chm\\chm_wasm.js",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\chm\\chm_wasm.js",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-chm",
       "sourceVersion": "3.1.2"
@@ -258,7 +258,7 @@
     {
       "rendererId": "chm",
       "id": "chm-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\chm\\chm_wasm_bg.wasm",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\chm\\chm_wasm_bg.wasm",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-chm",
       "sourceVersion": "3.1.2"
@@ -266,7 +266,7 @@
     {
       "rendererId": "chm",
       "id": "chm-license",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\chm\\LICENSE",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\chm\\LICENSE",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-chm",
       "sourceVersion": "3.1.2"
@@ -274,7 +274,7 @@
     {
       "rendererId": "chm",
       "id": "chm-third-party-notices",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\chm\\THIRD_PARTY_NOTICES.md",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\chm\\THIRD_PARTY_NOTICES.md",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-chm",
       "sourceVersion": "3.1.2"
@@ -282,7 +282,7 @@
     {
       "rendererId": "chm",
       "id": "chm-rust-notice",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\chm\\RUST_NOTICE.md",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\chm\\RUST_NOTICE.md",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-chm",
       "sourceVersion": "3.1.2"
@@ -290,7 +290,7 @@
     {
       "rendererId": "chm",
       "id": "chm-rust-third-party-licenses",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\vendor\\chm\\RUST_THIRD_PARTY_LICENSES.md",
+      "to": "D:\\art-supabase-pro\\docs\\vendor\\chm\\RUST_THIRD_PARTY_LICENSES.md",
       "copied": true,
       "sourcePackage": "@file-viewer/renderer-chm",
       "sourceVersion": "3.1.2"
@@ -298,7 +298,7 @@
     {
       "rendererId": "data-asset",
       "id": "data-sql-wasm",
-      "to": "D:\\spa\\art-supabase-pro\\docs\\wasm\\data\\sql-wasm.wasm",
+      "to": "D:\\art-supabase-pro\\docs\\wasm\\data\\sql-wasm.wasm",
       "copied": true
     }
   ]

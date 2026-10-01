@@ -50,7 +50,7 @@ Yiqi Workshop helps developers build real business systems with Supabase as the 
 
 - Demo: https://869123771.github.io/art-supabase-pro/
 - GitHub: https://github.com/869123771/art-supabase-pro
-- Gitee: https://gitee.com/wangyanghub/art-supabase-pro
+- Gitee: https://gitee.com/hz24931233/art-supabase-pro
 - OSCHINA article: https://www.oschina.net/news/399833
 
 ## Recommended Description

@@ -12,7 +12,7 @@ export const WEB_LINKS = {
   GITHUB: 'https://github.com/869123771/art-supabase-pro',
 
   // 项目 Gitee 主页
-  GITEE: 'https://gitee.com/wangyanghub/art-supabase-pro',
+  GITEE: 'https://gitee.com/hz24931233/art-supabase-pro',
 
   // 项目文档
   DOCS: 'https://869123771.github.io/art-supabase-doc/',
