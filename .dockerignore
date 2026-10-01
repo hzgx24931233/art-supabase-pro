@@ -1,0 +1,43 @@
+# .env / .env.production 必须进入构建上下文（提供 VITE_SUPABASE_* 与默认配置），
+# 因此这里刻意不排除任何环境变量文件。
+
+# ---------- 依赖与构建产物（镜像内重新安装 / 重新构建） ----------
+node_modules
+**/node_modules
+docs
+**/docs
+dist
+dist-ssr
+.artifacts
+.bundle-stats.html
+
+# 由 @file-viewer/vite-plugin 在构建期从 node_modules 重新同步，避免把本地残留产物烤进镜像
+public/vendor
+public/wasm
+public/flyfish-viewer-assets.json
+
+# ---------- 版本控制 / IDE / 本地工具 ----------
+.git
+**/.git
+.idea
+.codex
+.agents
+.ai
+.interface-design
+*.local
+
+# ---------- 与前端构建无关（Edge Functions、测试、站点截图） ----------
+supabase
+tests
+**/tests
+screenshots
+**/screenshots
+playwright-report
+test-results
+playwright.config.ts
+deno.lock
+
+# ---------- 独立预览脚手架 ----------
+dashboard-preview.html
+dashboard-preview.ts
+data-select-preview.html
