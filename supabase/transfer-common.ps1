@@ -236,6 +236,44 @@ function New-StorageAdminHeaders {
   return $headers
 }
 
+function Get-StorageContentType {
+  param([Parameter(Mandatory = $true)][string]$ObjectName)
+
+  # Buckets that set allowed_mime_types reject a generic application/octet-stream
+  # upload, so derive the type from the stored object name.
+  $extension = [IO.Path]::GetExtension($ObjectName).ToLowerInvariant()
+  switch ($extension) {
+    '.png' { return 'image/png' }
+    '.jpg' { return 'image/jpeg' }
+    '.jpeg' { return 'image/jpeg' }
+    '.webp' { return 'image/webp' }
+    '.gif' { return 'image/gif' }
+    '.svg' { return 'image/svg+xml' }
+    '.bmp' { return 'image/bmp' }
+    '.ico' { return 'image/vnd.microsoft.icon' }
+    '.tif' { return 'image/tiff' }
+    '.tiff' { return 'image/tiff' }
+    '.pdf' { return 'application/pdf' }
+    '.txt' { return 'text/plain' }
+    '.md' { return 'text/markdown' }
+    '.csv' { return 'text/csv' }
+    '.json' { return 'application/json' }
+    '.xml' { return 'application/xml' }
+    '.doc' { return 'application/msword' }
+    '.docx' { return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }
+    '.xls' { return 'application/vnd.ms-excel' }
+    '.xlsx' { return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+    '.ppt' { return 'application/vnd.ms-powerpoint' }
+    '.pptx' { return 'application/vnd.openxmlformats-officedocument.presentationml.presentation' }
+    '.mp4' { return 'video/mp4' }
+    '.webm' { return 'video/webm' }
+    '.mov' { return 'video/quicktime' }
+    '.mp3' { return 'audio/mpeg' }
+    '.wav' { return 'audio/wav' }
+    default { return 'application/octet-stream' }
+  }
+}
+
 function Invoke-StorageObjectUpload {
   param(
     [Parameter(Mandatory = $true)][string]$ApiUrl,
@@ -255,7 +293,7 @@ function Invoke-StorageObjectUpload {
         -Uri "$($ApiUrl.TrimEnd('/'))/storage/v1/object/$encodedBucket/$encodedObject" `
         -Headers $headers `
         -InFile $FilePath `
-        -ContentType 'application/octet-stream' `
+        -ContentType (Get-StorageContentType -ObjectName $ObjectName) `
         -UseBasicParsing `
         -TimeoutSec 180 | Out-Null
       return

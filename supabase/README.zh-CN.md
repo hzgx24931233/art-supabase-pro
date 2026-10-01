@@ -155,16 +155,16 @@ New-Item -ItemType Directory -Path 'D:\supabase-transfer' -Force | Out-Null
   -TargetProjectRef 'abcdefghijklmnopqrst'
 ```
 
-输入**目标项目**的数据库密码，再按提示完整输入目标 project ref 确认。脚本会先拒绝来源相同、已有 `public` 表、Auth 用户、Storage 数据或已部署函数的目标，然后导入数据库、Realtime 发布关系、Storage 文件和已部署的 Edge Functions。恢复使用临时工作目录，不会把本仓库当前的 Supabase 链接改为目标项目。
+输入**目标项目**的数据库密码，再按提示完整输入目标 project ref 确认。脚本会先拒绝来源相同、已有 `public` 表、Auth 用户、Storage 数据或已部署函数的目标，然后导入数据库、Realtime 发布关系、Storage 文件和已部署的 Edge Functions。恢复使用临时工作目录，不会把本仓库当前的 Supabase 链接改为目标项目。若目标的直连数据库主机只有 IPv6 地址（新项目默认如此）、Docker 容器无法访问 IPv6，脚本会改用 CLI 记录的 IPv4 连接池（Supavisor 会话模式 5432）导入。
 
-这一步会写入目标项目。数据库导入在一个事务中执行；如果后续 Storage 或函数部署失败，目标可能只完成了一部分。此时应检查错误，并在**新的空项目**上重试完整恢复，不要把同一份备份当作可安全合并到已有项目的增量包。
+这一步会写入目标项目。数据库导入按 `roles.sql` → `schema.sql` → 数据 → 迁移历史的顺序在同一个 psql 会话中执行：`schema.sql` **逐条提交**（托管项目的 `max_locks_per_transaction` 远小于这种规模 schema 在单个事务中需要的锁数量，整体事务会耗尽共享锁表），数据导入本身仍在一个事务中，失败即回滚。如果 `schema.sql` 中途失败，或后续 Storage、函数部署失败，目标可能只完成了一部分。此时应检查错误，并在**新的空项目**上重试完整恢复，不要把同一份备份当作可安全合并到已有项目的增量包。
 
 ## 恢复后还要做什么
 
 - 在目标项目重新填写 Edge Function Secrets 的**值**；`metadata/edge-function-secret-names.json` 只有名称，没有值。重新配置 Auth/OAuth、SMTP、邮件模板、站点 URL、回调地址、自定义域名及其他 Dashboard 专属设置。
 - 查看 `database/managed-schema-snapshot.sql`，人工核对原项目对 `auth`、`storage` 托管结构做过的自定义策略、触发器等变更；脚本不会自动重放整个托管 schema。如果使用 Vault 或列加密，先按 [Supabase 官方迁移指南](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore) 迁移加密根密钥。自定义 `LOGIN` 角色密码也要单独设置。
 - 原项目的函数 import map、`deno.json` 等额外文件可能无法从已部署函数中完整还原。需要时从受控的源代码另行部署。脚本恢复的是**备份时远端已部署**的函数，并不会把此后对仓库 `supabase/functions/` 的本地修改自动发布到目标。
-- 检查目标的 API 暴露配置、Storage 文件类型与缓存设置、Realtime、Auth 登录，以及关键业务表数量和租户权限。Storage 的 API 回退上传会使用 `application/octet-stream`，所以特殊 MIME 类型和缓存策略需要复核。
+- 检查目标的 API 暴露配置、Storage 文件类型与缓存设置、Realtime、Auth 登录，以及关键业务表数量和租户权限。`storage cp` 不支持把本地文件上传到远端（仅支持从远端下载），脚本会自动改用 Storage API 逐个上传，并按对象名推断 Content-Type，因此设置了 `allowed_mime_types` 的桶（如 `ai-ui-design-reference`）也能正常写入；但 API 回退不会写入自定义缓存策略，需要时请复核缓存设置。
 - 要让前端连接新项目，另行更新前端环境中的 Supabase URL 和公开 key；不要把 `service_role` 或 `sb_secret_` key 放进前端。
 
 ## 常见问题

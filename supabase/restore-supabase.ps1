@@ -25,8 +25,43 @@ function Invoke-Supabase {
   if ($exitCode -ne 0) { throw 'A Supabase CLI command failed. See the preceding command output.' }
 }
 
+function Test-HostResolvesOverIpv4 {
+  param([Parameter(Mandatory = $true)][string]$HostName)
+
+  try { $addresses = [System.Net.Dns]::GetHostAddresses($HostName) }
+  catch { return $false }
+  return @($addresses | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork }).Count -gt 0
+}
+
+function Get-PoolerDatabaseConnection {
+  param([Parameter(Mandatory = $true)][string]$ProjectRef)
+
+  # 'supabase link' ran in this temporary stage directory, so the recorded pooler
+  # belongs to the target project.
+  $poolerPath = Join-Path (Get-Location).Path 'supabase\.temp\pooler-url'
+  if (-not (Test-Path -LiteralPath $poolerPath -PathType Leaf)) { return $null }
+
+  $uri = $null
+  $poolerUrl = (Get-Content -LiteralPath $poolerPath -Raw).Trim()
+  if (-not [uri]::TryCreate($poolerUrl, [UriKind]::Absolute, [ref]$uri)) { return $null }
+  if ($uri.Scheme -notmatch '^postgres(ql)?$') { return $null }
+  # Transaction mode (6543) would not keep session_replication_role for the data import.
+  if ($uri.Port -ne 5432) { return $null }
+
+  $user = ([uri]::UnescapeDataString($uri.UserInfo) -split ':')[0]
+  $database = $uri.AbsolutePath.TrimStart('/')
+  if ([string]::IsNullOrWhiteSpace($uri.Host) -or [string]::IsNullOrWhiteSpace($user) -or
+      [string]::IsNullOrWhiteSpace($database)) { return $null }
+  if ($user -match '^postgres\.([a-z0-9]{20})$' -and $Matches[1] -ne $ProjectRef) { return $null }
+
+  return @{ Host = $uri.Host; Port = [string]$uri.Port; User = $user; Database = $database }
+}
+
 function Get-LinkedDatabaseConnection {
-  param([Parameter(Mandatory = $true)][string]$Password)
+  param(
+    [Parameter(Mandatory = $true)][string]$Password,
+    [Parameter(Mandatory = $true)][string]$ProjectRef
+  )
   $dryRun = Invoke-SupabaseQuiet @('db', 'dump', '--linked', '--password', $Password, '--data-only', '--dry-run')
   if (-not $dryRun.Succeeded) { throw 'Unable to resolve the linked target database connection.' }
   $text = $dryRun.Output
@@ -38,7 +73,18 @@ function Get-LinkedDatabaseConnection {
       [string]::IsNullOrWhiteSpace($user) -or [string]::IsNullOrWhiteSpace($database)) {
     throw 'Unable to parse the target database connection.'
   }
-  return @{ Host = $dbHost; Port = $port; User = $user; Database = $database }
+  $connection = @{ Host = $dbHost; Port = $port; User = $user; Database = $database }
+
+  # Newer projects publish only an AAAA record for the direct database host, and
+  # Docker Desktop containers have no IPv6 route, so connect through the IPv4 pooler.
+  if (Test-HostResolvesOverIpv4 -HostName $dbHost) { return $connection }
+  $pooler = Get-PoolerDatabaseConnection -ProjectRef $ProjectRef
+  if (-not $pooler) {
+    Write-Warning "The direct database host '$dbHost' has no IPv4 address and no session pooler was recorded; the restore may fail to connect."
+    return $connection
+  }
+  Write-Host "Direct database host is IPv6-only; connecting through the IPv4 pooler $($pooler.Host)..."
+  return $pooler
 }
 
 function Test-DockerReady {
@@ -60,8 +106,37 @@ function Invoke-PsqlRestore {
     [Parameter(Mandatory = $true)][string]$Password
   )
 
+  # A NOT VALID CHECK constraint was never verified against the source rows, so the
+  # backup's own data can violate it and COPY would still reject those rows. Defer the
+  # constraints this session may drop to after the data import, then add them back
+  # NOT VALID, which is the state the source database was in.
+  $deferNotValidConstraints = @'
+create temp table _restore_not_valid_checks as
+select format('alter table %I.%I add constraint %I %s', n.nspname, c.relname, con.conname, pg_get_constraintdef(con.oid)) as readd,
+       format('alter table %I.%I drop constraint %I', n.nspname, c.relname, con.conname) as drop_stmt
+from pg_constraint con
+join pg_class c on c.oid = con.conrelid
+join pg_namespace n on n.oid = c.relnamespace
+where con.contype = 'c' and not con.convalidated
+  and pg_catalog.pg_get_userbyid(c.relowner) = current_user;
+do $$ declare r record; begin
+  for r in select drop_stmt from _restore_not_valid_checks loop execute r.drop_stmt; end loop;
+end $$;
+'@
+
+  $restoreNotValidConstraints = @'
+do $$ declare r record; begin
+  for r in select readd from _restore_not_valid_checks loop execute r.readd; end loop;
+end $$;
+drop table _restore_not_valid_checks;
+'@
+
   # Keep the SQL files in the order specified by Supabase's logical restore guide.
-  # One psql session makes session_replication_role apply to the data import.
+  # One psql session makes session_replication_role and the deferred constraints apply
+  # to the data import. schema.sql must commit per statement: hosted projects cap
+  # max_locks_per_transaction well below what a schema of this size needs, and one
+  # wrapping transaction exhausts the shared lock table. Only the data import keeps a
+  # transaction of its own.
   $previousPassword = [Environment]::GetEnvironmentVariable('PGPASSWORD', 'Process')
   $previousPreference = $ErrorActionPreference
   try {
@@ -69,11 +144,15 @@ function Invoke-PsqlRestore {
     $ErrorActionPreference = 'Continue'
     & docker run --rm -v "${BackupPath}:/backup:ro" -e PGPASSWORD postgres:17-alpine `
       psql "host=$($Connection.Host) port=$($Connection.Port) dbname=$($Connection.Database) user=$($Connection.User) sslmode=require" `
-      --single-transaction --variable ON_ERROR_STOP=1 `
+      --variable ON_ERROR_STOP=1 `
       --file /backup/database/roles.sql `
       --file /backup/database/schema.sql `
+      --command $deferNotValidConstraints `
       --command 'SET session_replication_role = replica' `
+      --command 'BEGIN' `
       --file /backup/database/data.sql `
+      --command 'COMMIT' `
+      --command $restoreNotValidConstraints `
       --file /backup/database/migration-history-schema.sql `
       --file /backup/database/migration-history-data.sql
     $exitCode = $LASTEXITCODE
@@ -125,7 +204,7 @@ try {
   Push-Location $stage
   try {
     Invoke-Supabase @('link', '--project-ref', $TargetProjectRef, '--password', $plainPassword)
-    $connection = Get-LinkedDatabaseConnection $plainPassword
+    $connection = Get-LinkedDatabaseConnection -Password $plainPassword -ProjectRef $TargetProjectRef
     $tableCheck = Invoke-SupabaseQuiet @('db', 'query', '--linked', '--agent=no', '--output', 'json', "select (select count(*) from pg_tables where schemaname = 'public') + (select count(*) from auth.users) + (select count(*) from storage.buckets) + (select count(*) from storage.objects) as count")
     if (-not $tableCheck.Succeeded) { throw 'Unable to check whether the target project is empty.' }
     $targetRows = @(ConvertFrom-SupabaseJsonArray `
@@ -180,15 +259,19 @@ try {
     if (Test-Path $storagePath) {
       $serviceRoleKey = $null
       foreach ($bucket in @(Get-ChildItem -LiteralPath $storagePath -Directory)) {
-        $bucketFiles = @(Get-ChildItem -LiteralPath $bucket.FullName -File -Recurse)
+        # 'storage cp ss:///<bucket> .' downloads into a directory named after the bucket,
+        # so a CLI-made backup stores objects one level below the bucket directory.
+        $bucketRoot = Join-Path $bucket.FullName $bucket.Name
+        if (-not (Test-Path -LiteralPath $bucketRoot -PathType Container)) { $bucketRoot = $bucket.FullName }
+        $bucketFiles = @(Get-ChildItem -LiteralPath $bucketRoot -File -Recurse)
         if ($bucketFiles.Count -eq 0) { continue }
-        Write-Host "Uploading Storage bucket '$($bucket.Name)'..."
-        $copyResult = Invoke-SupabaseQuiet @('storage', 'cp', $bucket.FullName, "ss:///$($bucket.Name)", '--recursive', '--experimental')
+        Write-Host "Uploading Storage bucket '$($bucket.Name)' ($($bucketFiles.Count) files)..."
+        $copyResult = Invoke-SupabaseQuiet @('storage', 'cp', $bucketRoot, "ss:///$($bucket.Name)", '--recursive', '--experimental')
         if ($copyResult.Succeeded) { continue }
         Write-Warning "Supabase CLI Storage upload failed for '$($bucket.Name)'; retrying through the Storage API. $($copyResult.Error)"
         if (-not $serviceRoleKey) { $serviceRoleKey = Get-SupabaseServiceRoleKey -ProjectRef $TargetProjectRef }
         foreach ($file in $bucketFiles) {
-          $objectName = $file.FullName.Substring($bucket.FullName.Length + 1).Replace('\', '/')
+          $objectName = $file.FullName.Substring($bucketRoot.Length + 1).Replace('\', '/')
           Invoke-StorageObjectUpload `
             -ApiUrl "https://$TargetProjectRef.supabase.co" `
             -ServiceRoleKey $serviceRoleKey `
