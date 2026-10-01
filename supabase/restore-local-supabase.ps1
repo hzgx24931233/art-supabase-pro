@@ -158,17 +158,9 @@ function Invoke-LocalPsqlRestore {
     [Parameter(Mandatory = $true)][uri]$DbUri,
     [switch]$MigrationSchemaExists
   )
-  $arguments = @(
-    '--single-transaction', '--variable', 'ON_ERROR_STOP=1',
-    '--file', '/backup/database/roles.sql',
-    '--file', '/backup/database/schema.sql',
-    '--command', 'SET session_replication_role = replica',
-    '--file', '/backup/database/data.sql')
-  if (-not $MigrationSchemaExists) {
-    $arguments += @('--file', '/backup/database/migration-history-schema.sql')
-  }
-  $arguments += @('--file', '/backup/database/migration-history-data.sql')
-  Invoke-LocalPsql -DbUri $DbUri -Arguments $arguments
+  Invoke-LocalPsql -DbUri $DbUri -Arguments (Get-LogicalRestorePsqlArguments `
+    -DatabaseRoot '/backup/database' `
+    -SkipMigrationHistorySchema:$MigrationSchemaExists)
 }
 
 function Invoke-LocalPsqlQuery {
@@ -231,14 +223,15 @@ try {
   $storageRoot = Join-Path $BackupPath 'storage'
   if (Test-Path -LiteralPath $storageRoot -PathType Container) {
     foreach ($bucket in @(Get-ChildItem -LiteralPath $storageRoot -Directory)) {
-      $files = @(Get-ChildItem -LiteralPath $bucket.FullName -File -Recurse)
+      $bucketRoot = Get-StorageBucketRoot -BucketDirectory $bucket.FullName
+      $files = @(Get-ChildItem -LiteralPath $bucketRoot -File -Recurse)
       if ($files.Count -eq 0) { continue }
-      Write-Host "Restoring local Storage bucket '$($bucket.Name)'..."
-      $copy = Invoke-SupabaseQuiet @('storage', 'cp', $bucket.FullName, "ss:///$($bucket.Name)", '--recursive', '--local', '--experimental', '--jobs', '4')
+      Write-Host "Restoring local Storage bucket '$($bucket.Name)' ($($files.Count) files)..."
+      $copy = Invoke-SupabaseQuiet @('storage', 'cp', $bucketRoot, "ss:///$($bucket.Name)", '--recursive', '--local', '--experimental', '--jobs', '4')
       if ($copy.Succeeded) { continue }
       Write-Warning "Local Storage CLI copy failed for '$($bucket.Name)'; using the local Storage API. $($copy.Error)"
       foreach ($file in $files) {
-        $objectName = $file.FullName.Substring($bucket.FullName.Length + 1).Replace('\', '/')
+        $objectName = $file.FullName.Substring($bucketRoot.Length + 1).Replace('\', '/')
         Invoke-StorageObjectUpload `
           -ApiUrl ([string]$status.API_URL) `
           -ServiceRoleKey ([string]$status.SERVICE_ROLE_KEY) `

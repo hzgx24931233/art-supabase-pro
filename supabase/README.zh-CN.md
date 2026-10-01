@@ -68,7 +68,7 @@ New-Item -ItemType Directory -Path 'D:\supabase-transfer-test' -Force | Out-Null
   -LocalRoot 'D:\supabase-transfer-test\local'
 ```
 
-恢复脚本创建独立的本机 Supabase 项目，检查目标为空，再导入数据库、已去除源凭据的 Auth 用户、Storage 文件、Realtime 发布关系和已下载的函数源码。它不会执行 `supabase link` 或连接原云项目。`D:\supabase-transfer-test\local` 必须是不存在的新目录；默认使用 `54321` 等 Supabase 本地端口，若已被占用，请修改新建的 `local\supabase\config.toml` 中的端口后加 `-Resume` 重新运行。若数据库导入或 Storage 导入中途失败，应检查报错并在新的空目录重新恢复，不要把快照合并到已有数据里。
+恢复脚本创建独立的本机 Supabase 项目，检查目标为空，再导入数据库、已去除源凭据的 Auth 用户、Storage 文件、Realtime 发布关系和已下载的函数源码。它不会执行 `supabase link` 或连接原云项目。`D:\supabase-transfer-test\local` 必须是不存在的新目录；默认使用 `54321` 等 Supabase 本地端口，若已被占用，请修改新建的 `local\supabase\config.toml` 中的端口后加 `-Resume` 重新运行。数据库导入与远端恢复共用同一套序列（`schema.sql` 逐条提交、数据导入独立事务、`NOT VALID` 约束延迟到数据之后再建回），因此本地和远端的行为一致。若数据库导入或 Storage 导入中途失败，应检查报错并在新的空目录重新恢复，不要把快照合并到已有数据里；尤其要重建整个本地目录，因为 `schema.sql` 失败时目标已不是空库。
 
 恢复成功后查看本地地址和公开 key：
 

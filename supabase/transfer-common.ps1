@@ -375,3 +375,102 @@ function Assert-BackupManifest {
     }
   }
 }
+
+function Get-LogicalRestorePsqlArguments {
+  param(
+    [Parameter(Mandatory = $true)][string]$DatabaseRoot,
+    [switch]$SkipMigrationHistorySchema
+  )
+
+  # A NOT VALID CHECK constraint was never verified against the source rows, so the
+  # backup's own data can violate it and COPY would still reject those rows. Defer the
+  # constraints this session is allowed to drop until after the data import, then add
+  # them back NOT VALID, which is the state the source database was in. Supabase-owned
+  # tables in managed schemas are excluded by the ownership filter.
+  $deferNotValidConstraints = @'
+create temp table _restore_not_valid_checks as
+select format('alter table %I.%I add constraint %I %s', n.nspname, c.relname, con.conname, pg_get_constraintdef(con.oid)) as readd,
+       format('alter table %I.%I drop constraint %I', n.nspname, c.relname, con.conname) as drop_stmt
+from pg_constraint con
+join pg_class c on c.oid = con.conrelid
+join pg_namespace n on n.oid = c.relnamespace
+where con.contype = 'c' and not con.convalidated
+  and pg_catalog.pg_get_userbyid(c.relowner) = current_user;
+do $$ declare r record; begin
+  for r in select drop_stmt from _restore_not_valid_checks loop execute r.drop_stmt; end loop;
+end $$;
+'@
+
+  $restoreNotValidConstraints = @'
+do $$ declare r record; begin
+  for r in select readd from _restore_not_valid_checks loop execute r.readd; end loop;
+end $$;
+drop table _restore_not_valid_checks;
+'@
+
+  # Keep the SQL files in the order specified by Supabase's logical restore guide.
+  # One psql session makes session_replication_role and the deferred constraints apply
+  # to the data import. schema.sql must commit per statement: both hosted projects and
+  # the local stack cap max_locks_per_transaction below what a schema with thousands of
+  # tables, functions and policies needs if one transaction holds every DDL lock. Only
+  # the data import keeps a transaction of its own.
+  $arguments = @(
+    '--variable', 'ON_ERROR_STOP=1',
+    '--file', "$DatabaseRoot/roles.sql",
+    '--file', "$DatabaseRoot/schema.sql",
+    '--command', $deferNotValidConstraints,
+    '--command', 'SET session_replication_role = replica',
+    '--command', 'BEGIN',
+    '--file', "$DatabaseRoot/data.sql",
+    '--command', 'COMMIT',
+    '--command', $restoreNotValidConstraints
+  )
+  if (-not $SkipMigrationHistorySchema) {
+    $arguments += @('--file', "$DatabaseRoot/migration-history-schema.sql")
+  }
+  $arguments += @('--file', "$DatabaseRoot/migration-history-data.sql")
+  return $arguments
+}
+
+function Get-StorageBucketRoot {
+  param([Parameter(Mandatory = $true)][string]$BucketDirectory)
+
+  # 'storage cp ss:///<bucket> .' downloads into a directory named after the bucket, so
+  # a CLI-made backup stores objects one level below the bucket directory while an API
+  # download does not. Pick whichever level actually holds the objects.
+  $nested = Join-Path $BucketDirectory (Split-Path $BucketDirectory -Leaf)
+  if (Test-Path -LiteralPath $nested -PathType Container) { return $nested }
+  return $BucketDirectory
+}
+
+function Test-HostResolvesOverIpv4 {
+  param([Parameter(Mandatory = $true)][string]$HostName)
+
+  try { $addresses = [System.Net.Dns]::GetHostAddresses($HostName) }
+  catch { return $false }
+  return @($addresses | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork }).Count -gt 0
+}
+
+function Get-PoolerDatabaseConnection {
+  param([Parameter(Mandatory = $true)][string]$ProjectRef)
+
+  # Reads the connection pooler 'supabase link' recorded, so the caller must run from a
+  # directory linked to $ProjectRef (the restore scripts link inside their own stage dir).
+  $poolerPath = Join-Path (Get-Location).Path 'supabase\.temp\pooler-url'
+  if (-not (Test-Path -LiteralPath $poolerPath -PathType Leaf)) { return $null }
+
+  $uri = $null
+  $poolerUrl = (Get-Content -LiteralPath $poolerPath -Raw).Trim()
+  if (-not [uri]::TryCreate($poolerUrl, [UriKind]::Absolute, [ref]$uri)) { return $null }
+  if ($uri.Scheme -notmatch '^postgres(ql)?$') { return $null }
+  # Transaction mode (6543) would not keep session_replication_role for the data import.
+  if ($uri.Port -ne 5432) { return $null }
+
+  $user = ([uri]::UnescapeDataString($uri.UserInfo) -split ':')[0]
+  $database = $uri.AbsolutePath.TrimStart('/')
+  if ([string]::IsNullOrWhiteSpace($uri.Host) -or [string]::IsNullOrWhiteSpace($user) -or
+      [string]::IsNullOrWhiteSpace($database)) { return $null }
+  if ($user -match '^postgres\.([a-z0-9]{20})$' -and $Matches[1] -ne $ProjectRef) { return $null }
+
+  return @{ Host = $uri.Host; Port = [string]$uri.Port; User = $user; Database = $database }
+}
