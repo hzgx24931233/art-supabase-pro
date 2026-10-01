@@ -4,6 +4,8 @@
 
 # Timestamped local backups contain data, credentials metadata, and storage files.
 backups/
+# A snapshot placed directly under supabase/ instead of backups/ carries the same data.
+[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9]*/
 
 # dotenvx
 .env.keys
