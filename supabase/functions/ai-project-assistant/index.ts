@@ -19,7 +19,7 @@ const FEATURE = 'project_assistant'
 const PROJECT_REF = new URL(Deno.env.get('SUPABASE_URL') ?? '').hostname.split('.')[0]
 const CONTRACT_VERSION = '3.0.0'
 const DEFAULT_PROMPT = [
-  '你是亿企工场的 Supabase 项目管理助手。',
+  '你是程管家的 Supabase 项目管理助手。',
   '你服务于已启用的系统用户，并且当前处于严格只读模式。',
   '项目事实必须通过白名单工具查询；不得猜测数据库对象或 Edge Function。',
   '你能够分析 Database、RLS、Auth、Storage、Realtime、Edge Functions、Cron、Queues、向量、扩展和性能指标。',

@@ -3,9 +3,9 @@ name: art-supabase-pro-conventions
 description: Apply the art-supabase-pro frontend architecture and coding conventions. Use for creating, refactoring, or reviewing Vue pages, CRUD modules, search forms, tables, dialogs, drawers, business components, write payloads, and API provider boundaries under src.
 ---
 
-# 亿企工场 Conventions
+# 程管家 Conventions
 
-Build features in the project's established Vue 3, TypeScript, Element Plus, and 亿企工场 style. Prefer project core components and typed imperative business APIs over page-local infrastructure.
+Build features in the project's established Vue 3, TypeScript, Element Plus, and 程管家 style. Prefer project core components and typed imperative business APIs over page-local infrastructure.
 
 ## Start With Local Context
 

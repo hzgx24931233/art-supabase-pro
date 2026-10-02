@@ -1,4 +1,4 @@
-# 亿企工场
+# 程管家
 
 Yiqi Workshop is an open-source enterprise application built with Vue 3, TypeScript, Element Plus, Supabase, and an AI SQL assistant.
 
@@ -59,7 +59,7 @@ Yiqi Workshop is a Vue 3 + Element Plus + Supabase enterprise application with R
 
 ## Chinese Description
 
-亿企工场是一个基于 Vue 3、TypeScript、Element Plus、Supabase 和 AI SQL 助手的企业级业务平台。项目内置登录认证、RBAC 权限、菜单管理、用户角色、数据字典、附件资源、SQL 工作台、AI 写 SQL、车辆管理系统、TMS 运输管理系统和司机端相关能力，适合快速二次开发企业后台、TMS、车队管理、车辆管理、内部系统和 Supabase/PostgreSQL 应用。
+程管家是一个基于 Vue 3、TypeScript、Element Plus、Supabase 和 AI SQL 助手的企业级业务平台。项目内置登录认证、RBAC 权限、菜单管理、用户角色、数据字典、附件资源、SQL 工作台、AI 写 SQL、车辆管理系统、TMS 运输管理系统和司机端相关能力，适合快速二次开发企业后台、TMS、车队管理、车辆管理、内部系统和 Supabase/PostgreSQL 应用。
 
 ## Keywords
 

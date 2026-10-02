@@ -140,6 +140,9 @@ export async function login(params: Api.Auth.LoginParams) {
         showErrorMessage: true
       }
     )
+
+    console.log('result', result);
+
     const { accessToken, refreshToken } = result.data?.session ?? {}
     if (!accessToken || !refreshToken) {
       throw new Error('手机号登录未返回有效会话')

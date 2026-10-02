@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 #
-# 亿企工场 art-supabase-pro —— 生产镜像（多阶段构建）
+# 程管家 art-supabase-pro —— 生产镜像（多阶段构建）
 #   构建阶段：node:alpine + pnpm 执行 `vite build`，产出静态站点
 #   运行阶段：nginx:alpine，静态托管 + History 路由回退 + /api 反向代理到 Supabase
 #
@@ -46,7 +46,7 @@ RUN pnpm build
 FROM nginx:alpine AS runtime
 
 LABEL org.opencontainers.image.title="art-supabase-pro" \
-  org.opencontainers.image.description="亿企工场（Vue3 + Vite + Supabase），nginx 静态托管" \
+  org.opencontainers.image.description="程管家（Vue3 + Vite + Supabase），nginx 静态托管" \
   org.opencontainers.image.source="https://gitee.com/hz24931233/art-supabase-pro"
 
 # 覆盖默认站点配置：History 回退 + /api 反代，详见 nginx.conf

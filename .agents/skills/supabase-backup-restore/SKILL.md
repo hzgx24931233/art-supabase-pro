@@ -119,8 +119,10 @@ $env:RESTORE_DB_PASSWORD = '<目标数据库密码>'
 
 备份本身带不走这些，脚本会在结束时警告，但不要漏：
 
-- **Edge Function Secrets 的值**：只有名称被记录（本仓库为 11 个：`AI_API_KEY`、`AI_BASE_URL`、`AI_MODEL`、`OPENAI_API_KEY`、`SUPABASE_ANON_KEY`、`SUPABASE_DB_URL`、`SUPABASE_JWKS`、`SUPABASE_PUBLISHABLE_KEYS`、`SUPABASE_SECRET_KEYS`、`SUPABASE_SERVICE_ROLE_KEY`、`SUPABASE_URL`），值必须重新填写。
-- **`auth.identities` 不在快照里**：只恢复 `auth.users`（本次 39 条）。邮箱/密码登录可能因此不可用，需要重建 identities 后验证登录。`auth.sessions`、`auth.refresh_tokens` 同理。
+- **Edge Function Secrets 的值**：备份只记录名称和 SHA-256 指纹，值不可读回。但恢复后**不要**照着清单逐个重填——先 `supabase secrets list --project-ref <ref>` 看新项目已有的项。Supabase 会按新项目自动注入平台级默认 secrets（`SUPABASE_URL`、`SUPABASE_ANON_KEY`、`SUPABASE_SERVICE_ROLE_KEY`、`SUPABASE_DB_URL`、`SUPABASE_JWKS`、`SUPABASE_PUBLISHABLE_KEYS`、`SUPABASE_SECRET_KEYS`），这些已经是对的，手动覆盖反而有害：`SUPABASE_PUBLISHABLE_KEYS` 和 `SUPABASE_SECRET_KEYS` 的代码期望是含 `default` 字段的 JSON（`readKeyMap` 里 `JSON.parse(raw).default`），塞裸 key 会让解析失败。真正需要手工补的通常只有业务侧凭据（本仓库为 `AI_API_KEY`、`AI_BASE_URL`、`AI_MODEL`、`OPENAI_API_KEY` 四个 AI 服务配置），这些值只能由项目所有者提供。缺失时 AI 功能会优雅降级并给出明确提示，其余业务功能正常。
+- **登录凭据不会随快照恢复**。先看 `manifest.json` 的 `recipient_safe_auth`：为 `true` 说明这是**接收者安全版本**，打包时已清除 Auth 密码哈希、identities、会话和一次性令牌（判断特征：`migration-history-data.sql` 是占位注释、没有 `managed-schema-snapshot.sql`）。这类备份恢复后 `auth.users` 行数正常，但 `encrypted_password` 全为 NULL、`auth.identities` 为 0，**任何人都无法用原密码登录**——原密码哈希不存在于备份中的任何位置，不可恢复。
+  修复分两步：先按 GoTrue 的格式补齐 `auth.identities`（`provider='email'`、`provider_id` = user id、`identity_data` 含 `sub`/`email`/`email_verified`/`phone_verified`；注意 `auth.identities.email` 是 generated 列，不能显式插入），再重建密码（Admin API `PUT /auth/v1/admin/users/{id}` 设 `password`，或配置 SMTP 后让用户自助重置）。想保留所有人的原密码，只能改用**所有者保管的原始备份**重新恢复。
+  排查与修复的完整 SQL 见 `references/pitfalls.md`；`auth.sessions`、`auth.refresh_tokens` 缺失只影响既有会话，不影响新登录。
 - **Dashboard 专属配置**：Auth/OAuth、SMTP、邮件模板、站点 URL、回调地址、自定义域名。
 - **自定义 LOGIN 角色密码**、Vault/列加密的根密钥、函数 import map 或 `deno.json`。
 - **Storage 缓存策略**：走 Storage API 上传不写自定义 `cache-control`，需要时复核。

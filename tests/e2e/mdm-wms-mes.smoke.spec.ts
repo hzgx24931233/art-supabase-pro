@@ -122,28 +122,28 @@ async function installApplicationMenuMocks(page: Page): Promise<void> {
       json: [
         {
           code: 'platform',
-          name: '亿企工场',
+          name: '程管家',
           description: '企业数字化平台',
           baseUrl: '/',
           sort: 1
         },
         {
           code: 'mdm',
-          name: '亿企工场 MDM',
+          name: '程管家 MDM',
           description: '主数据治理',
           baseUrl: '/mdm/',
           sort: 15
         },
         {
           code: 'wms',
-          name: '亿企工场 WMS',
+          name: '程管家 WMS',
           description: '仓储管理',
           baseUrl: '/wms/',
           sort: 55
         },
         {
           code: 'mes',
-          name: '亿企工场 MES',
+          name: '程管家 MES',
           description: '制造执行',
           baseUrl: '/mes/',
           sort: 60

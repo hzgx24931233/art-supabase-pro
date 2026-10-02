@@ -135,7 +135,7 @@ export const exportExcel = async <TRecord extends object>(
   workbook.Props = {
     Title: filename,
     Subject: '数据导出',
-    Author: workbookProperties.creator || '亿企工场',
+    Author: workbookProperties.creator || '程管家',
     Manager: workbookProperties.lastModifiedBy || '',
     Company: '系统导出',
     Category: '数据',

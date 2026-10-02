@@ -1,4 +1,4 @@
-# 亿企工场 art-supabase-pro —— 容器编排（单服务；后续与其它服务同网编排时把 service 追加到同一 network）
+# 程管家 art-supabase-pro —— 容器编排（单服务；后续与其它服务同网编排时把 service 追加到同一 network）
 #
 #   docker compose up -d --build     构建并启动
 #   docker compose ps                查看状态（含健康检查）

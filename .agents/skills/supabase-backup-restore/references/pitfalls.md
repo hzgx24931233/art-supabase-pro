@@ -160,6 +160,120 @@ storage/<桶>/<对象名>               # 恢复脚本原先假设的层级
 
 ---
 
+## 6. 恢复后所有人都无法登录（接收者安全版本不含凭据）
+
+**症状**
+
+恢复"成功"，表和数据都在，但任何账号用原密码登录都失败（`Invalid login credentials`）。前端的 Supabase URL/key 都指向新项目，连接本身是通的。
+
+**根因**
+
+备份是**接收者安全版本**（`manifest.json` 的 `recipient_safe_auth` 为 `true`）。`package-supabase-backup.ps1` 会清除 Auth 密码哈希、identities、会话、刷新令牌和一次性令牌，并去掉迁移历史内容与托管 schema 快照；`migration-history-data.sql` 只剩一行占位注释。**原密码哈希不存在于这份备份的任何位置**，因此不可恢复——这不是恢复过程丢的，也不是配置问题。
+
+判断一份备份是不是接收者版本：
+
+```powershell
+# true 即接收者安全版本；所有者保管的原始备份为 false 或没有该字段
+(Get-Content -Raw supabase\backups\<时间戳>\manifest.json | ConvertFrom-Json).recipient_safe_auth
+Test-Path supabase\backups\<时间戳>\database\managed-schema-snapshot.sql   # 接收者版本为 False
+```
+
+**诊断 SQL**
+
+```sql
+select
+  (select count(*) from auth.users)                                                as users,
+  (select count(*) from auth.identities)                                           as identities,
+  (select count(*) from auth.users where encrypted_password is not null)           as with_password,
+  (select count(*) from auth.users where last_sign_in_at is not null)              as ever_signed_in
+from (select 1) t;
+-- 接收者版本的典型结果：users=39, identities=0, with_password=0, ever_signed_in=35
+-- ever_signed_in 很大而 with_password=0，就是凭据被清除的signature
+```
+
+### 伴随问题：读任何用户都返回 500
+
+如果 Admin API 读用户报 `500 {"error_code":"unexpected_failure","msg":"Database error loading user"}`（列用户则是 `Database error finding users`），而**查一个不存在的用户返回 404**，说明 GoTrue 本身正常，是**扫描已有的用户行时失败**。
+
+根因是**托管 auth schema 的版本差异**：`supabase db dump` 导出的 `auth.users` 里，下面这些列在源项目是 NULL，而目标项目较新的 GoTrue 把它们当作非空字符串扫描，NULL 直接让读取失败：
+
+`encrypted_password`、`confirmation_token`、`email_change`、`email_change_token_current`、`email_change_token_new`、`phone_change`、`phone_change_token`、`reauthentication_token`、`recovery_token`
+
+定位方法：建一个临时用户（GoTrue 自己写的行保证格式正确），与源用户行做逐列 diff，只打印有差异的列——上面这些正是"探针是空串、源行是 NULL"的那批：
+
+```sql
+with probe as (select to_jsonb(p) as j from auth.users p where p.id = '<探针 id>'::uuid),
+     src   as (select to_jsonb(s) as j from auth.users s where s.id = '<源用户 id>'::uuid)
+select k.key, probe.j->>k.key as probe_value, src.j->>k.key as source_value
+from probe, src, lateral jsonb_object_keys(probe.j) as k(key)
+where (probe.j->>k.key) is distinct from (src.j->>k.key) order by k.key;
+```
+
+```sql
+update auth.users set
+  confirmation_token = coalesce(confirmation_token, ''),
+  email_change = coalesce(email_change, ''),
+  email_change_token_current = coalesce(email_change_token_current, ''),
+  email_change_token_new = coalesce(email_change_token_new, ''),
+  phone_change = coalesce(phone_change, ''),
+  phone_change_token = coalesce(phone_change_token, ''),
+  reauthentication_token = coalesce(reauthentication_token, ''),
+  recovery_token = coalesce(recovery_token, ''),
+  encrypted_password = coalesce(encrypted_password, '');
+```
+
+**这一步必须在设密码之前做**，否则 Admin API 自己就是 500，没法用它设密码。
+
+另有一个容易误判的障碍：`email_confirmed_at` 为 NULL 的账号（例如走邀请流程创建、但没配 SMTP 所以确认链接没发出去的账号）登录会被拒（HTTP **400**），与密码无关。需要时 `update auth.users set email_confirmed_at = coalesce(email_confirmed_at, now())`。
+
+**修复步骤一：补齐 `auth.identities`**
+
+GoTrue 的 email identity 格式（可用 Admin API 建一个临时用户、读回 `auth.identities` 行来确认，用完删除）。注意 `email` 是 generated 列，直接插入会报 `cannot insert a non-DEFAULT value into column "email"`：
+
+```sql
+begin;
+insert into auth.identities (provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+select
+  u.id::text,
+  u.id,
+  jsonb_build_object(
+    'sub', u.id::text,
+    'email', u.email,
+    'email_verified', (u.email_confirmed_at is not null),
+    'phone_verified', (u.phone_confirmed_at is not null)
+  ),
+  'email',
+  u.last_sign_in_at,
+  u.created_at,
+  coalesce(u.updated_at, u.created_at)
+from auth.users u
+where u.email is not null
+  and not exists (select 1 from auth.identities i where i.user_id = u.id and i.provider = 'email');
+commit;
+```
+
+这一步是必须的：不仅是密码登录的前提，应用侧"登录方式管理"界面也依赖 `identities` 数据。
+
+**修复步骤二：重建密码**（三者选一）
+
+1. Admin API 直接设密码（需要用户知道新密码）：
+   `PUT https://<ref>.supabase.co/auth/v1/admin/users/{id}`，body `{"password":"<新密码>"}`，带 `apikey` + `Authorization: Bearer <service_role>`。
+2. 配好 Dashboard 的 SMTP 与 Site URL/Redirect URLs 后，让用户走"忘记密码"自助重置；或先用 Admin API `generate_link` 产出重置链接手动分发。
+3. **想保留所有人的原密码，只能用所有者保管的原始备份重新恢复**（该备份含真实密码哈希与 `managed-schema-snapshot.sql`）。恢复到新项目后，先前的 identities/密码修复就不需要了。
+
+**验证方式**：用一个临时用户（Admin API 创建 → 真实调用 `POST /auth/v1/token?grant_type=password` → 删除）确认密码登录链路可用，再处理真实账号。批量处理完要独立核对，不要只看 API 的 200：
+
+```sql
+-- 直接确认写入的哈希就是目标密码（bcrypt 每次盐不同，不能比对字符串）
+select count(*) as users,
+       count(*) filter (where crypt('123456', encrypted_password) = encrypted_password) as matches_target
+from auth.users;
+```
+
+再用真实登录验证三种情形：已确认账号用新密码应成功、错误密码应被拒（HTTP 400）、未确认邮箱的账号应被拒。登录测试后记得 `POST /auth/v1/logout`，避免留下会话。
+
+排查时注意 PowerShell 的一个陷阱：函数里若混用 `Write-Output` 记录日志和 `return $true`，`if (Test-Login ...)` 判断的是"非空数组"因而恒为真，会得到看似通过的假阳性——日志用 `Write-Host`，让返回值成为唯一输出。
+
 ## 补充：CLI 的 `storage cp` 不支持本地上传到远端
 
 ```

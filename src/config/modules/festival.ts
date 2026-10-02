@@ -45,6 +45,6 @@ export const festivalConfigList: FestivalConfig[] = [
   //   date: '2024-12-25',
   //   image: sd,
   //   count: 3 // 可选，不设置则使用默认值 3 次
-  //   scrollText: 'Merry Christmas！亿企工场祝您圣诞快乐，愿节日的欢乐与祝福如雪花般纷至沓来！',
+  //   scrollText: 'Merry Christmas！程管家祝您圣诞快乐，愿节日的欢乐与祝福如雪花般纷至沓来！',
   // }
 ]

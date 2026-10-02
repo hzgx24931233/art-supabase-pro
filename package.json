@@ -202,7 +202,7 @@
     "vue-img-cutter": "^3.1.1",
     "vue-tsc": "~3.3.5"
   },
-  "description": "亿企工场是一个基于 Vue 3、TypeScript、Element Plus、Supabase 和 AI SQL 助手的企业级中后台应用平台，内置 RBAC 权限、SQL 工作台、AI 写 SQL、车辆管理系统、TMS 运输管理系统和司机端相关能力。",
+  "description": "程管家是一个基于 Vue 3、TypeScript、Element Plus、Supabase 和 AI SQL 助手的企业级中后台应用平台，内置 RBAC 权限、SQL 工作台、AI 写 SQL、车辆管理系统、TMS 运输管理系统和司机端相关能力。",
   "main": "index.js",
   "directories": {
     "doc": "docs"

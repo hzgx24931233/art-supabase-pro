@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./src/assets/images/common/logo.webp" width="96" alt="Yiqi Workshop Logo" />
-  <h1>Yiqi Workshop · 亿企工场</h1>
+  <h1>Yiqi Workshop · 程管家</h1>
   <p><strong>A modular enterprise business platform powered by Vue 3 and Supabase</strong></p>
   <p>One shared platform for transportation, fleet, finance, HR, safety, driver operations, workflows, and governed AI.</p>
 
