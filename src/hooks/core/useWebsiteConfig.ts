@@ -111,8 +111,9 @@ const setWebsiteConfig = (config: UseWebsiteConfig): void => {
 }
 
 export function useWebsiteConfig() {
-  const siteName = computed(() => websiteConfig.value.siteName || AppConfig.systemInfo.name)
-  const brandName = computed(() => siteName.value.trim() || AppConfig.systemInfo.name)
+  const siteName = computed(() => AppConfig.systemInfo.name || websiteConfig.value.siteName)
+  const brandName = computed(() => AppConfig.systemInfo.name || websiteConfig.value.siteName)
+
   const loginTitle = computed(() => websiteConfig.value.loginTitle || `欢迎使用 ${siteName.value}`)
   const loginSubtitle = computed(
     () => websiteConfig.value.loginSubtitle || websiteConfig.value.loginDescription || ''
