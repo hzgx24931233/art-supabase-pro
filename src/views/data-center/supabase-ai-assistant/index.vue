@@ -24,7 +24,7 @@
             type: assistantMode === 'controlled_write' ? 'warning' : 'success',
             effect: 'light'
           },
-          { label: `项目：${overview?.projectRef || 'ckbftoopuyophiebamwy'}`, type: 'info' }
+          { label: `项目：${overview?.projectRef || 'nvzlwcutsqptngyqfzqs'}`, type: 'info' }
         ]"
       >
         <template #actions>

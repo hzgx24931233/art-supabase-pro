@@ -8,7 +8,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'https://869123771.github.io',
-  'https://ckbftoopuyophiebamwy.supabase.co'
+  new URL(Deno.env.get('SUPABASE_URL') ?? '').origin
 ]
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!

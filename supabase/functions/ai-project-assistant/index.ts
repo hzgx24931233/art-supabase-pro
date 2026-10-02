@@ -15,7 +15,8 @@ import {
 import { loadPublishedAiPrompt } from '../_shared/ai-prompt-template.ts'
 
 const FEATURE = 'project_assistant'
-const PROJECT_REF = 'ckbftoopuyophiebamwy'
+// 用于 Management API，必须等于本函数所在项目，因此从部署环境派生而不是写死
+const PROJECT_REF = new URL(Deno.env.get('SUPABASE_URL') ?? '').hostname.split('.')[0]
 const CONTRACT_VERSION = '3.0.0'
 const DEFAULT_PROMPT = [
   '你是亿企工场的 Supabase 项目管理助手。',

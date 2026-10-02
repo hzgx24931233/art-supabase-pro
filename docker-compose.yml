@@ -15,8 +15,8 @@ services:
         VITE_BASE_URL: /
         VITE_OUT_DIR: dist
         VITE_BUILD_COMPRESS: 'true'
-        VITE_SUPABASE_URL: https://ckbftoopuyophiebamwy.supabase.co
-        VITE_SUPABASE_KEY: sb_publishable_i-GAe_-FPQ5mkfEhDXhWLw_kcLsXcO2
+        VITE_SUPABASE_URL: https://nvzlwcutsqptngyqfzqs.supabase.co
+        VITE_SUPABASE_KEY: sb_publishable_QG4vqGLvkbaR7j5pD7woeA_kF_2ORTC
     image: art-supabase-pro:latest
     container_name: art-supabase-pro
     restart: unless-stopped

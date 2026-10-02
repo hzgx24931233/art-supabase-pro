@@ -125,6 +125,29 @@ $env:RESTORE_DB_PASSWORD = '<目标数据库密码>'
 - **自定义 LOGIN 角色密码**、Vault/列加密的根密钥、函数 import map 或 `deno.json`。
 - **Storage 缓存策略**：走 Storage API 上传不写自定义 `cache-control`，需要时复核。
 
+## 把应用指向新项目
+
+恢复完成后应用**默认仍指向源项目**——项目 ref 硬编码在多处。切换时逐项处理，并用 `git grep -l "<旧ref>"` 自查遗漏：
+
+| 位置 | 说明 |
+| --- | --- |
+| `.env` 的 `VITE_SUPABASE_URL` / `VITE_SUPABASE_KEY` | 前端配置入口。变量名是 `VITE_SUPABASE_KEY`，不是 `VITE_SUPABASE_PUBLISHABLE_KEY` |
+| `Dockerfile` 的 `ARG VITE_SUPABASE_*` | 构建期优先级最高，会覆盖 `.env`，必须同步 |
+| `docker-compose.yml` 的 `build.args` | 同上，会覆盖 Dockerfile 默认值 |
+| `nginx.conf` 的 `proxy_pass` **和** `proxy_set_header Host` | 必须一起改；只改 `proxy_pass` 会让上游收到的 Host 仍是旧项目 |
+| `src/views/data-center/supabase-ai-assistant/` | 两处 `overview.projectRef` 的兜底文案 |
+| `supabase/functions/sync-user`、`register-and-sync-user` | `allowedOrigins` 白名单里的项目 URL，改完**需重新部署** |
+| `supabase/functions/ai-project-assistant` | `PROJECT_REF` 用于调 Management API 查**自己项目**的函数列表，改完**需重新部署**；也可改为从 `Deno.env.get('SUPABASE_URL')` 派生，之后迁移不必再改 |
+| `supabase/backup-supabase.ps1` | `-ProjectRef` 的默认值 |
+| `tests/e2e/*.spec.ts`、`tests/powershell/supabase-cli-auth.test.ps1` | 测试中写死的项目 ref 与 URL |
+| `docs/` | 前端构建产物，内联了旧 URL/ref，重新构建即可更新 |
+
+**不要改** `.mcp.json` 和 `AGENTS.md`：它们把本仓库的 agent 工具作用域绑定在源项目上，是仓库的刻意约定，与"应用连哪个项目"是两回事。
+
+`VITE_*` 是**构建期**变量，Vite 会把值内联进产物，所以改完必须重新构建（Docker 部署要 `--build` 重建镜像），运行期加 `-e` 无效。
+
+改完用新项目的 publishable key 做一次只读验证即可确认配置正确：`GET /auth/v1/settings` 返回 200；REST 查业务表返回 `[]` 而不是 401，说明 key 有效且 RLS 正常拦截匿名访问（这是期望行为，不是故障）。注意 `/rest/v1/` 这个 OpenAPI 根路径本身对 publishable key 返回 401，不代表配置有问题。
+
 ## 排错速查
 
 | 现象 | 原因与处理 |

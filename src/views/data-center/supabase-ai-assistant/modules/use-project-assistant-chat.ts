@@ -161,7 +161,7 @@ export function useProjectAssistantChat(options: UseProjectAssistantChatOptions)
       '# Supabase AI 助手会话',
       '',
       `- 导出时间：${new Date().toLocaleString('zh-CN')}`,
-      `- 项目：${options.overview.value?.projectRef || 'ckbftoopuyophiebamwy'}`,
+      `- 项目：${options.overview.value?.projectRef || 'nvzlwcutsqptngyqfzqs'}`,
       `- 安全模式：${options.assistantMode.value === 'controlled_write' ? '管理员受控变更' : '只读'}`,
       '',
       ...chat.messages.flatMap((message) => [
