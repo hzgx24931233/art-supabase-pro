@@ -25,7 +25,7 @@ Custom Provider 的 Authorization URL 查询参数中。
 如果本机已安装 Supabase CLI，可用下面的命令重新部署：
 
 ```powershell
-supabase functions deploy oauth-provider-bridge --project-ref ckbftoopuyophiebamwy --use-api --no-verify-jwt
+supabase functions deploy oauth-provider-bridge --project-ref nvzlwcutsqptngyqfzqs --use-api --no-verify-jwt
 ```
 
 该函数必须允许未携带 Supabase 用户 JWT 的请求，因为授权页由浏览器访问，Token 端点由
@@ -36,13 +36,13 @@ Supabase Auth 服务访问。函数自身会校验固定回调地址、上游客
 项目回调地址：
 
 ```text
-https://ckbftoopuyophiebamwy.supabase.co/auth/v1/callback
+https://nvzlwcutsqptngyqfzqs.supabase.co/auth/v1/callback
 ```
 
 函数根地址：
 
 ```text
-https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge
+https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge
 ```
 
 ## Supabase Custom Providers
@@ -58,26 +58,26 @@ https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge
 | Identifier | `custom:wechat` |
 | Client ID | 微信开放平台网站应用 AppID |
 | Client Secret | 对应 AppSecret |
-| Authorization URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/wechat/authorize` |
-| Token URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/wechat/token` |
-| UserInfo URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/wechat/userinfo` |
+| Authorization URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/wechat/authorize` |
+| Token URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/wechat/token` |
+| UserInfo URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/wechat/userinfo` |
 | Scopes | `snsapi_login` |
 | PKCE | 关闭 |
 | Email optional | 开启 |
 
 微信开放平台网站应用必须已审核并拥有“微信登录”权限；回调域配置为
-`ckbftoopuyophiebamwy.supabase.co`。公众号测试号不能获得网站应用 PC 扫码权限。
+`nvzlwcutsqptngyqfzqs.supabase.co`。公众号测试号不能获得网站应用 PC 扫码权限。
 
 ### 微信公众号测试号（仅微信内网页授权）
 
 沿用 `custom:wechat`，但把 Authorization URL 改为：
 
 ```text
-https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/wechat/authorize?mode=official-account
+https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/wechat/authorize?mode=official-account
 ```
 
 Scopes 填 `snsapi_userinfo`。在测试号“网页授权获取用户基本信息”中把授权回调域配置为
-`ckbftoopuyophiebamwy.supabase.co`。此模式需要在微信客户端中打开，不是电脑端扫码登录。
+`nvzlwcutsqptngyqfzqs.supabase.co`。此模式需要在微信客户端中打开，不是电脑端扫码登录。
 
 ### 企业微信自建应用（PC 扫码）
 
@@ -87,9 +87,9 @@ Scopes 填 `snsapi_userinfo`。在测试号“网页授权获取用户基本信�
 | Identifier | `custom:wecom` |
 | Client ID | 企业 CorpID |
 | Client Secret | 自建应用 Secret |
-| Authorization URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/wecom/authorize` |
-| Token URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/wecom/token` |
-| UserInfo URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/wecom/userinfo` |
+| Authorization URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/wecom/authorize` |
+| Token URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/wecom/token` |
+| UserInfo URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/wecom/userinfo` |
 | Scopes | 留空 |
 | PKCE | 关闭 |
 | Email optional | 开启 |
@@ -97,7 +97,7 @@ Scopes 填 `snsapi_userinfo`。在测试号“网页授权获取用户基本信�
 在企业微信管理后台完成以下设置：
 
 1. 创建自建应用，记录 CorpID、AgentId、Secret，并配置应用可见范围。
-2. “企业微信授权登录 → Web 网页”回调域填 `ckbftoopuyophiebamwy.supabase.co`。
+2. “企业微信授权登录 → Web 网页”回调域填 `nvzlwcutsqptngyqfzqs.supabase.co`。
 3. “网页授权及 JS-SDK”可信域名同样填写该域名。
 4. 若没有设置 `WECOM_AGENT_ID` Secret，可把 Authorization URL 写成
    `.../wecom/authorize?agent_id=你的AgentId`。
@@ -110,9 +110,9 @@ Scopes 填 `snsapi_userinfo`。在测试号“网页授权获取用户基本信�
 | Identifier | `custom:feishu` |
 | Client ID | 飞书 App ID（`cli_...`） |
 | Client Secret | 飞书 App Secret |
-| Authorization URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/feishu/authorize` |
-| Token URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/feishu/token` |
-| UserInfo URL | `https://ckbftoopuyophiebamwy.supabase.co/functions/v1/oauth-provider-bridge/feishu/userinfo` |
+| Authorization URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/feishu/authorize` |
+| Token URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/feishu/token` |
+| UserInfo URL | `https://nvzlwcutsqptngyqfzqs.supabase.co/functions/v1/oauth-provider-bridge/feishu/userinfo` |
 | Scopes | `contact:user.base:readonly contact:user.email:readonly` |
 | PKCE | 关闭 |
 | Email optional | 开启 |

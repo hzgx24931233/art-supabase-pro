@@ -2,9 +2,9 @@
 
 中文的远端备份、只读分发、本地恢复与跨项目恢复操作说明见 [README.zh-CN.md](README.zh-CN.md)。
 
-This is the only Supabase directory for project `ckbftoopuyophiebamwy`. Business subrepositories do not keep separate Supabase assets.
+This is the only Supabase directory for project `nvzlwcutsqptngyqfzqs`. Business subrepositories do not keep separate Supabase assets.
 
-- `functions/` contains the reviewed, deployable Edge Function source. Deploy a reviewed change with `supabase functions deploy <name> --project-ref ckbftoopuyophiebamwy --use-api`.
+- `functions/` contains the reviewed, deployable Edge Function source. Deploy a reviewed change with `supabase functions deploy <name> --project-ref nvzlwcutsqptngyqfzqs --use-api`.
 - `migrations/` has no local migration SQL. Reviewed production SQL is applied directly through the project-scoped Supabase MCP after backup and validation.
 - `tests/` contains database regression SQL shared by the whole workspace.
 - `backup-supabase.ps1` exports the remote project into one timestamped, Git-ignored backup directory. `package-supabase-backup.ps1` packages it for verified download, and `restore-local-supabase.ps1` restores it into an isolated local stack. `restore-supabase.ps1` imports it into a new remote project.
@@ -23,7 +23,7 @@ Refresh the repository facts after meaningful code changes, then deploy the revi
 
 ```powershell
 pnpm snapshot:ai
-supabase functions deploy ai-project-planner --project-ref ckbftoopuyophiebamwy --use-api
+supabase functions deploy ai-project-planner --project-ref nvzlwcutsqptngyqfzqs --use-api
 ```
 
 For NVIDIA NIM, set `AI_BASE_URL=https://integrate.api.nvidia.com/v1` and choose an available model
@@ -42,7 +42,7 @@ form.
 Apply reviewed database SQL through the project-scoped Supabase MCP, then deploy the function before enabling the UI in a shared environment:
 
 ```powershell
-supabase functions deploy ai-dispatch-advisor --project-ref ckbftoopuyophiebamwy --use-api
+supabase functions deploy ai-dispatch-advisor --project-ref nvzlwcutsqptngyqfzqs --use-api
 ```
 
 ## AI transport anomaly advisor
@@ -59,7 +59,7 @@ deviation or physical vehicle stoppage.
 Apply reviewed database SQL through the project-scoped Supabase MCP, then deploy the reviewed function before enabling the UI in a shared environment:
 
 ```powershell
-supabase functions deploy ai-transport-anomaly-advisor --project-ref ckbftoopuyophiebamwy --use-api
+supabase functions deploy ai-transport-anomaly-advisor --project-ref nvzlwcutsqptngyqfzqs --use-api
 ```
 
 ## Export and import a Supabase project

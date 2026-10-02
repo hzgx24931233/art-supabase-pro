@@ -174,7 +174,7 @@ Invoke-RestMethod -Method Delete `
 
 ## 五、参考基线
 
-以 `supabase/backups/20261001-103323` → 项目 `nvzlwcutsqptngyqfzqs` 的实测结果作为对照基线（该备份来自 `ckbftoopuyophiebamwy`）：
+以 `supabase/backups/20261001-103323` → 项目 `nvzlwcutsqptngyqfzqs` 的实测结果作为对照基线（该备份来自迁移前的旧项目）：
 
 | 指标 | 值 |
 | --- | --- |

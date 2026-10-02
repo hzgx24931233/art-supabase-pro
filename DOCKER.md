@@ -54,7 +54,7 @@ docker build -t art-supabase-pro:1.0.0 .
 # 覆盖构建期变量（VITE_* 会被内联进静态产物，改完必须重新 build）
 docker build \
   --build-arg VITE_BASE_URL=/ \
-  --build-arg VITE_SUPABASE_URL=https://ckbftoopuyophiebamwy.supabase.co \
+  --build-arg VITE_SUPABASE_URL=https://nvzlwcutsqptngyqfzqs.supabase.co \
   --build-arg VITE_SUPABASE_KEY=sb_publishable_xxxxxxxx \
   --build-arg VITE_BUILD_COMPRESS=true \
   -t art-supabase-pro:1.0.0 .
@@ -214,16 +214,16 @@ COPY --from=builder /app/dist /usr/share/nginx/html/art-supabase-pro
 
 ### 6.5 DNS / resolver（上游解析方式与代价）
 
-`nginx.conf` 里 `/api` 的上游写成**静态地址**（`proxy_pass https://ckbftoopuyophiebamwy.supabase.co/`），由 nginx 在启动时解析一次。这是实测后选定的方案：
+`nginx.conf` 里 `/api` 的上游写成**静态地址**（`proxy_pass https://nvzlwcutsqptngyqfzqs.supabase.co/`），由 nginx 在启动时解析一次。这是实测后选定的方案：
 
 - 好处：Docker Desktop（Windows/macOS）、Linux 引擎、K8s、裸机**都不需要额外配置 DNS**。
-- 代价：启动时必须能解析该域名，否则 nginx 直接退出（实测报 `[emerg] host not found in upstream "ckbftoopuyophiebamwy.supabase.co"`，容器 `exit 1`）。因此启动命令要带 restart 策略 —— compose 已配 `restart: unless-stopped`，`docker run` 请加 `--restart unless-stopped`，DNS 恢复后由重启自愈。
+- 代价：启动时必须能解析该域名，否则 nginx 直接退出（实测报 `[emerg] host not found in upstream "nvzlwcutsqptngyqfzqs.supabase.co"`，容器 `exit 1`）。因此启动命令要带 restart 策略 —— compose 已配 `restart: unless-stopped`，`docker run` 请加 `--restart unless-stopped`，DNS 恢复后由重启自愈。
 - 上游 IP 在容器生命周期内被固定；Supabase 侧更换 IP 时执行 `docker restart art-supabase-pro`（或容器内 `nginx -s reload`）重新解析。
 
 如果更需要「启动不依赖 DNS」的请求时解析，就改成变量形式并显式指定 resolver：
 
 ```nginx
-set $supabase_origin "https://ckbftoopuyophiebamwy.supabase.co";
+set $supabase_origin "https://nvzlwcutsqptngyqfzqs.supabase.co";
 resolver 127.0.0.11 valid=30s ipv6=off;   # 必须按环境改成实际 DNS
 proxy_pass $supabase_origin;
 ```

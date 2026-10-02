@@ -3,7 +3,7 @@
 这组 PowerShell 脚本生成一次**快照**，可恢复到本机 Supabase，也可恢复到另一个全新云项目：
 
 ```text
-原远端项目 ckbftoopuyophiebamwy
+原远端项目 nvzlwcutsqptngyqfzqs
         ↓ backup-supabase.ps1
 本机 supabase/backups/<时间戳>/
         ├─ package-supabase-backup.ps1 → ZIP → 私有短期下载链接 → 别人的本机 Supabase
@@ -30,7 +30,7 @@ Set-Location 'D:\spa\art-supabase-pro'
 .\supabase\backup-supabase.ps1
 ```
 
-输入**原项目**的数据库密码。默认来源是 `ckbftoopuyophiebamwy`。成功后，终端会显示类似 `supabase/backups/20260930-123456` 的绝对路径；记下这个路径。
+输入**原项目**的数据库密码。默认来源是 `nvzlwcutsqptngyqfzqs`。成功后，终端会显示类似 `supabase/backups/20260930-123456` 的绝对路径；记下这个路径。
 
 备份目录由脚本按时间戳新建，不覆盖旧目录。里面有：
 

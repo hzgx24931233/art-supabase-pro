@@ -12,11 +12,11 @@ test('PostgREST accepts reserved characters without interpreting them as OR clau
   const env = loadEnv('development', process.cwd(), '')
   const url = process.env.VITE_SUPABASE_URL || env.VITE_SUPABASE_URL
   const key = process.env.VITE_SUPABASE_KEY || env.VITE_SUPABASE_KEY
-  expect(new URL(url).hostname).toBe('ckbftoopuyophiebamwy.supabase.co')
+  expect(new URL(url).hostname).toBe('nvzlwcutsqptngyqfzqs.supabase.co')
   const storage = await context.storageState()
   const entry = storage.origins
     .flatMap((origin) => origin.localStorage)
-    .find((item) => item.name === 'sb-ckbftoopuyophiebamwy-auth-token')
+    .find((item) => item.name === 'sb-nvzlwcutsqptngyqfzqs-auth-token')
   const session: unknown = JSON.parse(entry?.value ?? 'null')
   if (
     !session ||

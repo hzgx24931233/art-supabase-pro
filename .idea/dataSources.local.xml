@@ -7,7 +7,7 @@
       </database-info>
       <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
-      <user-name>postgres.ckbftoopuyophiebamwy</user-name>
+      <user-name>postgres.nvzlwcutsqptngyqfzqs</user-name>
       <schema-mapping>
         <introspection-scope>
           <node kind="database" qname="@">

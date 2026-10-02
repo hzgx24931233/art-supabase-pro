@@ -144,7 +144,7 @@ $env:RESTORE_DB_PASSWORD = '<目标数据库密码>'
 | `tests/e2e/*.spec.ts`、`tests/powershell/supabase-cli-auth.test.ps1` | 测试中写死的项目 ref 与 URL |
 | `docs/` | 前端构建产物，内联了旧 URL/ref，重新构建即可更新 |
 
-**不要改** `.mcp.json` 和 `AGENTS.md`：它们把本仓库的 agent 工具作用域绑定在源项目上，是仓库的刻意约定，与"应用连哪个项目"是两回事。
+`.mcp.json` 与同步描述它的 `AGENTS.md` 绑定本仓库 agent 工具的作用域，和"应用连哪个项目"是两回事，但两者都应与当前项目保持一致——本仓库已一并改为 `nvzlwcutsqptngyqfzqs`。
 
 `VITE_*` 是**构建期**变量，Vite 会把值内联进产物，所以改完必须重新构建（Docker 部署要 `--build` 重建镜像），运行期加 `-e` 无效。
 

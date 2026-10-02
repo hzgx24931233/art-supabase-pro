@@ -10,7 +10,7 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:5432/postgres</jdbc-url>
       <secret-storage>master_key</secret-storage>
-      <user-name>postgres.ckbftoopuyophiebamwy</user-name>
+      <user-name>postgres.nvzlwcutsqptngyqfzqs</user-name>
       <schema-mapping>
         <introspection-scope>
           <node kind="database" qname="@">

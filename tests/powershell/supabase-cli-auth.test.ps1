@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot '../../supabase/transfer-common.ps1')
 
-$projectRef = 'ckbftoopuyophiebamwy'
+$projectRef = 'nvzlwcutsqptngyqfzqs'
 $originalToken = $env:SUPABASE_ACCESS_TOKEN
 $script:calls = 0
 $script:scenario = ''
@@ -14,7 +14,7 @@ function Invoke-SupabaseQuiet {
       ($script:scenario -eq 'environment-token' -and $env:SUPABASE_ACCESS_TOKEN)) {
     return [pscustomobject]@{
       Succeeded = $true
-      Output = '{"projects":[{"ref":"ckbftoopuyophiebamwy"}]}'
+      Output = '{"projects":[{"ref":"nvzlwcutsqptngyqfzqs"}]}'
     }
   }
   return [pscustomobject]@{ Succeeded = $false; Output = '' }

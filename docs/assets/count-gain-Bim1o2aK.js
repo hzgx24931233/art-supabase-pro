@@ -1,1 +1,0 @@
-import{Ht as e,Mt as t,cn as n}from"./framework-Dycu6R4Q.js";import{t as r}from"./workspace-D9wHB0rQ.js";var i=e({name:`WmsCountGain`,__name:`index`,setup(e){return(e,i)=>(n(),t(r,{kind:`gain`}))}});export{i as default};

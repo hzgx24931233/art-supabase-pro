@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [ValidatePattern('^[a-z0-9]{20}$')][string]$ProjectRef = 'ckbftoopuyophiebamwy',
+  [ValidatePattern('^[a-z0-9]{20}$')][string]$ProjectRef = 'nvzlwcutsqptngyqfzqs',
   [securestring]$DbPassword,
   [string]$BackupRoot,
   [string]$DbUrl

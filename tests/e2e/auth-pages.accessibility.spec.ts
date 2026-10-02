@@ -146,7 +146,7 @@ test('OAuth callback shows progress instead of briefly exposing the login form',
 }) => {
   await page.addInitScript(() => {
     localStorage.setItem(
-      'sb-ckbftoopuyophiebamwy-auth-token',
+      'sb-nvzlwcutsqptngyqfzqs-auth-token',
       JSON.stringify({
         access_token: 'a.b.c',
         refresh_token: 'test-refresh-token',
