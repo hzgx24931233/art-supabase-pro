@@ -6,9 +6,11 @@
     <div class="login-vision__grid" />
 
     <header class="login-vision__brand">
-      <span class="login-vision__logo"><ArtLogo size="38" /></span>
+      <span class="login-vision__logo">
+        <ArtLogo size="38" />
+      </span>
       <div>
-        <strong>{{ siteName }}</strong>
+        <strong :title="siteName">{{ siteName }}</strong>
         <span>TRANSPORT OPERATIONS CLOUD</span>
       </div>
     </header>
@@ -172,7 +174,7 @@
         max-width: 360px;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-size: 17px;
+        font-size: 48px;
         letter-spacing: 0.2px;
         white-space: nowrap;
       }

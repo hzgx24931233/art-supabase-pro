@@ -2,7 +2,6 @@
 <template>
   <div class="art-logo" :class="{ 'art-logo--dark': dark }">
     <img
-      v-if="variant !== 'wordmark'"
       :style="logoStyle"
       src="@imgs/common/logo.webp"
       width="36"
@@ -11,14 +10,15 @@
       class="art-logo__mark"
     />
     <span
-      v-if="variant !== 'mark' && !useWordmarkImage"
+      v-if="variant!='mark' "
       :style="wordmarkStyle"
       class="art-logo__wordmark"
-      :title="brandName"
-      >{{ brandName }}</span
-    >
+      :title="brandName">
+      {{ brandName }} 
+    </span>
+ 
     <img
-      v-else-if="variant !== 'mark'"
+      v-else-if="variant!='mark' "
       :src="wordmarkImageUrl"
       :style="wordmarkImageStyle"
       :alt="brandName"
@@ -82,6 +82,12 @@
       Boolean(wordmarkImageUrl.value) &&
       failedWordmarkUrl.value !== wordmarkImageUrl.value
   )
+
+  console.log('useWordmarkImage=', useWordmarkImage.value);
+  console.log('websiteConfig.value.wordmarkImageEnabled=', websiteConfig.value.wordmarkImageEnabled);
+  console.log('wordmarkImageUrl.value=',wordmarkImageUrl.value);
+  console.log('failedWordmarkUrl.value=',failedWordmarkUrl.value);
+
 
   const wordmarkImageStyle = computed<CSSProperties>(() => ({
     // Match the perceived cap height of the default 0.62em text. The transparent source image
