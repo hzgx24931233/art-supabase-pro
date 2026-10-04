@@ -282,7 +282,7 @@
     password: '123456',
     rememberPassword: rememberPasswordPreference
   })
-  if (rememberedIdentifier && rememberedIdentifier !== '624944977@qq.com') {
+  if (rememberedIdentifier && rememberedIdentifier !== '869123771@qq.com') {
     formData.password = ''
   }
 

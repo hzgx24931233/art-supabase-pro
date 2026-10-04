@@ -8,6 +8,7 @@ playwright-report/
 test-results/
 *.local
 .cursorrules
+.zcode/
 
 # Auto-generated files are committed so lint and typecheck work in a clean checkout.
 .bundle-stats.html

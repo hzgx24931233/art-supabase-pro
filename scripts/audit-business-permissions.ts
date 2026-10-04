@@ -30,6 +30,7 @@ type ManagedModule =
   | 'smis'
   | 'wms'
   | 'scm'
+  | 'ctm'
   | 'system'
   | 'workflow'
 
@@ -37,6 +38,7 @@ const managedViewRoots = new Map<ManagedModule, string>([
   ['tms', join(projectRoot, 'modules/art-supabase-tms/src/views')],
   ['system', join(projectRoot, 'src/views/system')],
   ['workflow', join(projectRoot, 'src/views/workflow')],
+  ['ctm', join(projectRoot, 'modules/art-supabase-ctm/src/views')],
   ['fms', join(projectRoot, 'modules/art-supabase-fms/src/views')],
   ['vms', join(projectRoot, 'modules/art-supabase-vms/src/views')],
   ['hr', join(projectRoot, 'modules/art-supabase-hr/src/views')],
@@ -57,11 +59,12 @@ const businessModules = new Set<ManagedModule>([
   'pmis',
   'smis',
   'wms',
-  'scm'
+  'scm',
+  'ctm'
 ])
 const sourceExtensions = new Set(['.ts', '.tsx', '.vue'])
 const permissionPattern =
-  /['"`]((?:System|Workflow|Tms|Finance|Hr|Mdm|Pmis|Smis|Scm|Wms|Vehicle|Insurance|Parts|PartsCategory|Supplier)[A-Za-z0-9]*(?::[A-Za-z][A-Za-z0-9]*)+)['"`]/g
+  /['"`]((?:System|Workflow|Tms|Finance|Hr|Mdm|Pmis|Smis|Scm|Wms|Ctm|Vehicle|Insurance|Parts|PartsCategory|Supplier)[A-Za-z0-9]*(?::[A-Za-z][A-Za-z0-9]*)+)['"`]/g
 const platformSuperPattern = /isPlatformSuper|平台超级管理员|仅平台|platform super administrator/i
 
 // These files use platform-super only for cross-tenant context or controlled writes where explicitly required.
@@ -292,6 +295,14 @@ const platformSuperAllowlist = new Map<string, string>([
     'cross-tenant selection and tenant-wide recognition history for platform administrators; saving uses button permissions'
   ],
   [
+    'modules/art-supabase-mdm/src/views/production/personnel/index.vue',
+    'cross-tenant personnel and department import target selection; import actions use button permissions'
+  ],
+  [
+    'modules/art-supabase-mdm/src/views/production/work-center/index.vue',
+    'cross-tenant work-center import and default-policy configuration target selection; import and configure actions use button permissions'
+  ],
+  [
     'modules/art-supabase-smis/src/views/basic-data/inspection-category/index.vue',
     'cross-tenant inspection-category context and tenant columns'
   ],
@@ -381,6 +392,7 @@ function toProjectPath(filePath: string): string {
 
 function resolveBusinessCatalogOwner(menuName: string): ManagedModule {
   if (menuName.startsWith('Tms')) return 'tms'
+  if (menuName.startsWith('Ctm')) return 'ctm'
   if (menuName.startsWith('Finance')) return 'fms'
   if (menuName.startsWith('Hr')) return 'hr'
   if (menuName.startsWith('Mdm')) return 'mdm'

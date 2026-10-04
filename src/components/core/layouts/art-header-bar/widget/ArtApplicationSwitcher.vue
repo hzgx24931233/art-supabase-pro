@@ -96,8 +96,11 @@
     documentationEntry
   ])
 
-  const iconByApplication: Record<SwitcherEntryCode, string> = {
+  // 图标是展示信息且有运行时兜底，因此不要求穷尽应用列表：
+  // 业务仓固定的是平台历史版本，新增应用码时不应让旧版本子仓类型检查失败。
+  const iconByApplication: Partial<Record<SwitcherEntryCode, string>> = {
     platform: 'ri:building-4-line',
+    ctm: 'ri:file-list-3-line',
     fms: 'ri:bank-card-line',
     hr: 'ri:team-line',
     mdm: 'ri:database-2-line',

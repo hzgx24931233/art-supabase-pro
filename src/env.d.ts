@@ -2,7 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_CODE?:
-    'platform' | 'fms' | 'hr' | 'mdm' | 'mes' | 'smis' | 'tms' | 'vms' | 'wms'
+    'platform' | 'ctm' | 'fms' | 'hr' | 'mdm' | 'mes' | 'smis' | 'tms' | 'vms' | 'wms'
 }
 
 interface ImportMeta {

@@ -45,3 +45,7 @@
 	path = modules/art-supabase-site
 	url = https://gitee.com/hz24931233/art-supabase-site.git
 	branch = master
+[submodule "modules/art-supabase-ctm"]
+	path = modules/art-supabase-ctm
+	url = https://gitee.com/hz24931233/art-supabase-ctm.git
+	branch = master

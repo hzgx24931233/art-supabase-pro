@@ -141,7 +141,7 @@ export async function login(params: Api.Auth.LoginParams) {
       }
     )
 
-    console.log('result', result);
+    console.log('result', result)
 
     const { accessToken, refreshToken } = result.data?.session ?? {}
     if (!accessToken || !refreshToken) {

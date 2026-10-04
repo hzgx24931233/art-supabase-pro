@@ -15,6 +15,7 @@
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
+      "@ctm/*": ["modules/art-supabase-ctm/src/*"],
       "@fms/*": ["modules/art-supabase-fms/src/*"],
       "@hr/*": ["modules/art-supabase-hr/src/*"],
       "@mdm/*": ["modules/art-supabase-mdm/src/*"],
@@ -41,6 +42,8 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
+    "modules/art-supabase-ctm/src/**/*.ts",
+    "modules/art-supabase-ctm/src/**/*.vue",
     "modules/art-supabase-fms/src/**/*.ts",
     "modules/art-supabase-fms/src/**/*.vue",
     "modules/art-supabase-hr/src/**/*.ts",

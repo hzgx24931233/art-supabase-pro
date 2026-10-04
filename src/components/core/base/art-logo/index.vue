@@ -10,23 +10,13 @@
       class="art-logo__mark"
     />
     <span
-      v-if="variant!='mark' "
+      v-if="variant !== 'mark'"
       :style="wordmarkStyle"
       class="art-logo__wordmark"
-      :title="brandName">
-      {{ brandName }} 
+      :title="brandName"
+    >
+      {{ brandName }}
     </span>
- 
-    <img
-      v-else-if="variant!='mark' "
-      :src="wordmarkImageUrl"
-      :style="wordmarkImageStyle"
-      :alt="brandName"
-      width="1008"
-      height="240"
-      class="art-logo__wordmark-image"
-      @error="handleWordmarkImageError"
-    />
   </div>
 </template>
 
@@ -51,8 +41,7 @@
     dark: false
   })
 
-  const { brandName, websiteConfig } = useWebsiteConfig()
-  const failedWordmarkUrl = ref('')
+  const { brandName } = useWebsiteConfig()
 
   const logoSize = computed(() => {
     if (typeof props.size === 'number') return `${props.size}px`
@@ -68,41 +57,6 @@
     fontSize: `calc(${logoSize.value} * 0.62)`,
     maxWidth: `calc(${logoSize.value} * 4.5)`
   }))
-
-  const wordmarkImageUrl = computed(() => {
-    const url = props.dark
-      ? websiteConfig.value.wordmarkDarkUrl
-      : websiteConfig.value.wordmarkLightUrl
-    return url?.trim() || ''
-  })
-
-  const useWordmarkImage = computed(
-    () =>
-      websiteConfig.value.wordmarkImageEnabled &&
-      Boolean(wordmarkImageUrl.value) &&
-      failedWordmarkUrl.value !== wordmarkImageUrl.value
-  )
-
-  console.log('useWordmarkImage=', useWordmarkImage.value);
-  console.log('websiteConfig.value.wordmarkImageEnabled=', websiteConfig.value.wordmarkImageEnabled);
-  console.log('wordmarkImageUrl.value=',wordmarkImageUrl.value);
-  console.log('failedWordmarkUrl.value=',failedWordmarkUrl.value);
-
-
-  const wordmarkImageStyle = computed<CSSProperties>(() => ({
-    // Match the perceived cap height of the default 0.62em text. The transparent source image
-    // contains a small safety margin, so its element must be slightly taller than the glyph itself.
-    width: `calc(${logoSize.value} * 3.02)`,
-    height: `calc(${logoSize.value} * 0.72)`
-  }))
-
-  const handleWordmarkImageError = (): void => {
-    failedWordmarkUrl.value = wordmarkImageUrl.value
-  }
-
-  watch(wordmarkImageUrl, () => {
-    failedWordmarkUrl.value = ''
-  })
 </script>
 
 <style scoped lang="scss">
@@ -116,12 +70,6 @@
     line-height: 1;
 
     &__mark {
-      display: block;
-      flex: none;
-      object-fit: contain;
-    }
-
-    &__wordmark-image {
       display: block;
       flex: none;
       object-fit: contain;

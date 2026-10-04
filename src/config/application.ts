@@ -7,6 +7,7 @@
  */
 export const APPLICATION_CODES = [
   'platform',
+  'ctm',
   'fms',
   'hr',
   'mdm',
@@ -43,6 +44,14 @@ export const APPLICATION_PROFILES: Record<ApplicationCode, ApplicationProfile> =
     defaultPath: '/dashboard',
     deploymentPath: '/art-supabase-pro/',
     developmentPort: 3006
+  },
+  ctm: {
+    code: 'ctm',
+    name: 'CTM合同管理',
+    description: '合同登记、台账与履约档案管理',
+    defaultPath: '/ctm/registration',
+    deploymentPath: '/art-supabase-ctm/',
+    developmentPort: 3022
   },
   fms: {
     code: 'fms',

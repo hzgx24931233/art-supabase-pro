@@ -15,7 +15,7 @@
       :style="{ width: dualMenuShowText ? '80px' : '64px', background: getMenuTheme.background }"
     >
       <button type="button" class="dual-menu-home" aria-label="返回首页" @click="navigateToHome">
-        <ArtLogo class="logo"/>
+        <ArtLogo class="logo" />
       </button>
 
       <ElScrollbar style="height: calc(100% - 135px)">

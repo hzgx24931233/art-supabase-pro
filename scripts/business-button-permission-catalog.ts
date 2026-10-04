@@ -3071,7 +3071,8 @@ export const businessButtonPermissionCatalog: BusinessMenuButtonCatalogEntry[] =
       button('Push', '下推'),
       button('Select', '选单')
     ]
-  }
+  },
+  { menuName: 'CtmContract', buttons: crud({ view: true, import: true, export: true }) }
 ]
 
 export const systemButtonPermissionCatalog: BusinessMenuButtonCatalogEntry[] = [

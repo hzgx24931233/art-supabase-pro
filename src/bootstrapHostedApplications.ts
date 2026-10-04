@@ -24,6 +24,15 @@ Object.values(fmsIntegrationModules).forEach((module) => {
 })
 
 registerHostedApplication(
+  'ctm',
+  '../modules/art-supabase-ctm/src/views',
+  import.meta.glob<HostedRouteComponentModule>([
+    '../modules/art-supabase-ctm/src/views/**/*.vue',
+    '!../modules/art-supabase-ctm/src/views/**/modules/**/*.vue',
+    '!../modules/art-supabase-ctm/src/views/**/components/**/*.vue'
+  ])
+)
+registerHostedApplication(
   'fms',
   '../modules/art-supabase-fms/src/views',
   import.meta.glob<HostedRouteComponentModule>([

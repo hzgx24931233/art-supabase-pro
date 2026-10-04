@@ -4,6 +4,7 @@ interface RecordReferenceMeta {
 }
 
 const recordReferences: Record<string, RecordReferenceMeta> = {
+  ctm_contract: { label: '合同登记', routeName: 'CtmContract' },
   mdm_material: { label: '物料编码' },
   mdm_bom: { label: 'BOM', routeName: 'MdmBomMaintenance' },
   mdm_bom_item: { label: 'BOM 组件', routeName: 'MdmBomMaintenance' },

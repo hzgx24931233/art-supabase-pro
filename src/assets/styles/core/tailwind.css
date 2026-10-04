@@ -1,4 +1,5 @@
 @import 'tailwindcss' source('../../..');
+@source '../../../../modules/art-supabase-ctm/src';
 @source '../../../../modules/art-supabase-fms/src';
 @source '../../../../modules/art-supabase-hr/src';
 @source '../../../../modules/art-supabase-mdm/src';

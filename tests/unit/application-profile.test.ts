@@ -30,6 +30,7 @@ test('resolves every GitHub Pages application from the current account domain', 
 
   const expectedUrls = {
     platform: 'https://869123771.github.io/art-supabase-pro/',
+    ctm: 'https://869123771.github.io/art-supabase-ctm/',
     fms: 'https://869123771.github.io/art-supabase-fms/',
     hr: 'https://869123771.github.io/art-supabase-hr/',
     mdm: 'https://869123771.github.io/art-supabase-mdm/',
